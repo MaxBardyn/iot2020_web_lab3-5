@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="edit__container">
+        <a href="index.html">Back</a>
+
+        <form id="form">
+          <h1>Edit dress</h1>
+          <label for="input">Brand name</label>
+          <input class="edit__input" type="text" id="brand-input" />
+          <label for="input">Color</label>
+          <input class="edit__input" type="text" id="color-input" />
+          <label for="input">Price In UAH</label>
+          <input class="edit__input" type="number" id="price-input" />
+          <label for="input">Country</label>
+          <input class="edit__input" type="text" id="country-input" />
+          <label for="input">Size</label>
+          <input class="edit__input" list="number" id="size-input" />
+          <label for="input">Season</label>
+          <input class="edit__input" list="season" id="season-input" />
+          <button id="submit-button" type="submit">Submit</button>
+        </form>
+
+        <datalist id="season">
+          <option value="WINTER"></option>
+          <option value="SPRING"></option>
+          <option value="SUMMER"></option>
+          <option value="AUTUMN"></option>
+        </datalist>
+      </div>
+    </div>
+    <script type="module" src="js/edit.js"></script>
+  </body>
+</html>
