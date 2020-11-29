@@ -1,14 +1,16 @@
+import { 
+  getAllDresses,
+  deleteDress,
+} from './api.js'
+
 import {
-  getInputValues,
-  clearInputs,
+  EDIT_BUTTON_PREFIX,
+  REMOVE_BUTTON_PREFIX,
   renderItemList,
-  addDressToPage,
   getInputBrand,
   searchBrandInput,
 } from './dom_util.js'
 
-
-const submitButton = document.getElementById('submit-button')
 const searchButton = document.querySelector('#search-button')
 const cancelButton = document.querySelector('#cancel-button')
 const sortButton = document.querySelector('#sort-button')
@@ -17,81 +19,62 @@ const countPriceOutput = document.querySelector('#count-price')
 
 let dresses = []
 
-const addDress = ({brand, color, price, country, gender, size, season}) => {
-  const generatedId = uuid.v1()
+const refetchAllDresses = async () => {
+  const allDresses = await getAllDresses()
   
-  const newDress = {
-    id: generatedId,
-    brand,
-    color,
-    price,
-    country, 
-    gender, 
-    size, 
-    season,}
-  
-  dresses.push(newDress)
-  
-  addDressToPage(newDress)
+  dresses = allDresses
+
+  renderItemList(dresses, onEditItem, onRemoveItem)
+}
+
+  const onRemoveItem = element => {
+    const itemId = element.target.id.replace(REMOVE_BUTTON_PREFIX, '');
+    deleteDress(itemId).then(refetchAllDresses)
   }
 
-submitButton.addEventListener('click', event => {
+  const onEditItem = async element => {
+    const itemId = element.target.id.replace(EDIT_BUTTON_PREFIX, '')
+    onclick = () => {
+        location.href = `edit.html?id=${itemId}`
+    }
+}  
 
-  event.preventDefault()
-  
-  const {brand, color, price, country, gender, size, season} = getInputValues()
-  
-  clearInputs()
-  
-  addDress({
-    brand,
-    color,
-    price,
-    country,
-    gender, 
-    size, 
-    season,})
-  
-  // alert("Dress has been created")
-    })
-
-  sortButton.addEventListener('click', event => {
+sortButton.addEventListener('click', event => {
 
     event.preventDefault()
 
     dresses.sort(function(a, b) {
       return b.size - a.size;
     });
-  renderItemList(dresses)
+  renderItemList(dresses, onEditItem, onRemoveItem)
   })
 
-  searchButton.addEventListener('click', event =>{
+searchButton.addEventListener('click', event =>{
 
     event.preventDefault()
 
     const brand = getInputBrand();
-    const foundDresses = dresses.filter(dress => dress.brand.search(brand) !== -1)
+    const foundDresses = dresses.filter(dress => dress.brandName.search(brand) !== -1)
 
-    renderItemList(foundDresses)
+    renderItemList(foundDresses, onEditItem, onRemoveItem)
   })
 
-  cancelButton.addEventListener('click', event => { 
+cancelButton.addEventListener('click', event => { 
     event.preventDefault()
     searchBrandInput.value = ''
-    renderItemList(dresses)
+    renderItemList(dresses, onEditItem, onRemoveItem)
 })
 
 countPriceButton.addEventListener('click', event => {
 
-  event.preventDefault();
+  event.preventDefault()
 
   const sum = dresses.reduce((acc, dress) =>{
-  return acc += +dress.price
+  return acc += +dress.priceInUAH
   }, 0)
 
-  countPriceOutput.textContent = sum;
+  countPriceOutput.textContent = sum
 
 })
  
-
-renderItemList(dresses)
+refetchAllDresses()
