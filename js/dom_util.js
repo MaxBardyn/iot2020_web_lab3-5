@@ -1,11 +1,12 @@
-const itemsContainer = document.querySelector('#items-container')
+export const REMOVE_BUTTON_PREFIX = 'remove-button-';
+export const EDIT_BUTTON_PREFIX = 'edit-button-';
 
+const itemsContainer = document.querySelector('#items-container')
 
 const brandInput = document.querySelector('#brand-input')
 const colorInput = document.querySelector('#color-input')
 const priceInput = document.querySelector('#price-input')
 const countryInput = document.querySelector('#country-input')
-const gendeerInput = document.querySelector('#gender-input')
 const sizeInout = document.querySelector('#size-input')
 const seasonInput = document.querySelector('#season-input')
 
@@ -13,26 +14,24 @@ export const searchBrandInput = document.querySelector('#search-input')
 
 const getItemId = id => `item-${id}`
 
-const dressTemplate = ({id, brand, color, price, country, gender, size, season}) =>`
+const dressTemplate = ({id, brandName, color, priceInUAH, countryOfManufacturer, size, season}) =>`
 <li id="${getItemId(id)}">
-  <p class="item__price">Brand name: ${brand}</p>
+  <p class="item__price">Brand name: ${brandName}</p>
   <p class="item__color">Color: ${color}</p>
-  <p class="item__price">Price: ${price}</p>
-  <p class="item__country">Country: ${country}</p>
-  <p class="item__gender">Gender: ${gender}</p>
+  <p class="item__price">Price: ${priceInUAH}</p>
+  <p class="item__country">Country: ${countryOfManufacturer}</p>
   <p class="item__size">Size: ${size}</p>
   <p class="item__season">Season: ${season}</p>
-
-  
+  <button id="${EDIT_BUTTON_PREFIX}${id}" type="button" class="item__buttons-edit">Edit</button>
+  <button id="${REMOVE_BUTTON_PREFIX}${id}" type="button" class="item__buttons-delete">Remove</button>
 </li>`
 
 export const getInputValues = () =>{
   return {
-    brand : brandInput.value,
+    brandName : brandInput.value,
     color : colorInput.value,
-    price : priceInput.value,
-    country : countryInput.value,
-    gender : gendeerInput.value,
+    priceInUAH : priceInput.value,
+    countryOfManufacturer : countryInput.value,
     size : sizeInout.value,
     season : seasonInput.value,
   }
@@ -43,22 +42,28 @@ export const clearInputs = () =>{
   colorInput.value = ''
   priceInput.value = ''
   countryInput.value = ''
-  gendeerInput.value = ''
   sizeInout.value = ''
   seasonInput.value = ''
 }
 
-export const addDressToPage = ({id, brand, color, price, country, gender, size, season}) => {
+export const addDressToPage = ({id, brandName, color, priceInUAH, countryOfManufacturer, size, season}, onEditItem, onRemoveItem) => {
   itemsContainer.insertAdjacentHTML(
     'afterbegin',
-    dressTemplate({id, brand, color, price, country, gender, size, season})
+    dressTemplate({id, brandName, color, priceInUAH, countryOfManufacturer, size, season}, onEditItem, onRemoveItem)
   )
+
+  const editButton = document.querySelector(`#${EDIT_BUTTON_PREFIX}${id}`)
+  const deletedButton = document.querySelector(`#${REMOVE_BUTTON_PREFIX}${id}`)
+
+  editButton.addEventListener('click', onEditItem)
+  deletedButton.addEventListener('click', onRemoveItem)
 }
-export const renderItemList = items => {
+
+export const renderItemList = (items, onEditItem, onRemoveItem) => {
   itemsContainer.innerHTML = ''
 
   for(const item of items) {
-    addDressToPage(item)
+    addDressToPage(item, onEditItem, onRemoveItem)
   }
 }
 
